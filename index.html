@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚡ GPT-4O REALTIME GA</title>
+    <title>⚡ MAXIMUM GESCHWINDIGKEIT ASSISTENT</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh; 
             padding: 20px;
@@ -44,6 +44,17 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         
+        .speed-badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 8px;
+        }
+        
         .status-bar {
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             padding: 15px;
@@ -78,13 +89,23 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
         
-        #startBtn {
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        #testBtn {
+            background: linear-gradient(135deg, #27ae60 0%, #219653 100%);
+            color: white;
+        }
+        
+        #questionBtn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
         
-        #stopBtn {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+        #speechBtn {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
             color: white;
         }
         
@@ -112,6 +133,7 @@
             border-left: 4px solid #667eea;
             animation: slideIn 0.3s ease-out;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
         }
         
         @keyframes slideIn { 
@@ -135,19 +157,12 @@
             line-height: 1.3;
         }
         
-        .perf-indicator {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: #666;
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px solid #eee;
-        }
-        
-        .ultra-fast { 
-            color: #27ae60; 
-            font-weight: bold;
+        .latency { 
+            font-size: 10px; 
+            color: #667eea; 
+            text-align: right; 
+            margin-top: 8px;
+            font-weight: 600;
         }
         
         .api-section {
@@ -167,6 +182,13 @@
             margin-bottom: 12px;
             background: white;
             color: #333;
+            transition: border-color 0.3s ease;
+        }
+        
+        .api-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
         
         .api-button {
@@ -179,6 +201,13 @@
             font-size: 14px;
             font-weight: 600;
             width: 100%;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+        }
+        
+        .api-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
         }
         
         .hidden { display: none; }
@@ -191,241 +220,290 @@
             font-weight: 500;
         }
         
-        .realtime-indicator {
+        .ultra-fast { 
+            color: #27ae60; 
+            font-weight: bold;
+        }
+        
+        .perf-indicator {
             display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            color: #27ae60;
-            margin-top: 10px;
-            padding: 8px;
-            background: rgba(39, 174, 96, 0.1);
-            border-radius: 6px;
-        }
-        
-        .pulse {
-            width: 12px;
-            height: 12px;
-            background: #27ae60;
-            border-radius: 50%;
-            animation: pulse 1.5s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
-        }
-        
-        .debug-info {
-            font-size: 10px;
+            justify-content: space-between;
+            font-size: 11px;
             color: #666;
-            text-align: center;
             margin-top: 10px;
-            font-style: italic;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+        
+        .error-details {
+            font-size: 11px;
+            color: #e74c3c;
+            background: #fdf2f2;
+            padding: 8px;
+            border-radius: 6px;
+            margin-top: 8px;
+            display: none;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+                gap: 10px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="title">⚡ GPT-4O REALTIME GA</div>
-            <div class="debug-info">General Availability Version</div>
+            <div class="title">⚡ MAXIMUM GESCHWINDIGKEIT</div>
+            <div class="speed-badge">ZIEL: &lt;200ms • GPT-4o-mini • GitHub Pages</div>
         </div>
         
         <div id="apiKeySection" class="api-section">
             <input type="password" id="apiKeyInput" class="api-input" 
                    placeholder="OpenAI API Key (sk-...)">
             <button onclick="saveApiKey()" class="api-button">Key speichern</button>
+            <div class="error-details" id="keyError"></div>
         </div>
         
         <div class="status-bar">
             <div class="status-text" id="statusText">🔴 Bereit - API-Key erforderlich</div>
+            <div class="error-details" id="errorDetails"></div>
         </div>
         
         <div class="button-group">
-            <button id="startBtn" disabled>🎤 Start Realtime</button>
-            <button id="stopBtn" disabled>⏹️ Stop</button>
-        </div>
-        
-        <div class="realtime-indicator hidden" id="realtimeIndicator">
-            <div class="pulse"></div>
-            <span>Realtime-Verbindung aktiv</span>
+            <button id="testBtn" onclick="testAPI()">🧪 Test KI</button>
+            <button id="questionBtn" onclick="manualQuestion()">❓ Frage stellen</button>
+            <button id="speechBtn" onclick="toggleSpeech()" disabled>🎤 Spracheingabe</button>
         </div>
         
         <div class="answers-container" id="answersContainer">
-            <div class="placeholder">Realtime-Antworten erscheinen hier</div>
+            <div class="placeholder">Ultra-schnelle KI-Antworten erscheinen hier</div>
         </div>
     </div>
 
     <script>
-        class RealtimeGAAssistant {
+        class KIAssistent {
             constructor() {
-                this.ws = null;
-                this.sessionId = null;
                 this.openAIKey = localStorage.getItem('openai_api_key');
                 this.isRecording = false;
+                this.recognition = null;
                 this.maxAnswers = 10;
+                this.corsProxies = [
+                    'https://corsproxy.io/?',
+                    'https://api.allorigins.win/raw?url=',
+                    'https://cors-anywhere.herokuapp.com/'
+                ];
+                this.currentProxyIndex = 0;
 
                 this.initializeUI();
-                document.getElementById('startBtn').addEventListener('click', () => this.startRealtime());
-                document.getElementById('stopBtn').addEventListener('click', () => this.stopRealtime());
+                document.getElementById('speechBtn').addEventListener('click', () => this.toggleSpeech());
             }
 
             initializeUI() {
                 const apiKeySection = document.getElementById('apiKeySection');
                 const statusText = document.getElementById('statusText');
-                const startBtn = document.getElementById('startBtn');
+                const speechBtn = document.getElementById('speechBtn');
                 
                 if (this.openAIKey && this.openAIKey.startsWith('sk-')) {
                     apiKeySection.classList.add('hidden');
                     statusText.textContent = '🟢 Bereit';
-                    startBtn.disabled = false;
+                    speechBtn.disabled = false;
                 } else {
                     apiKeySection.classList.remove('hidden');
                     statusText.textContent = '🔴 Bereit - API-Key erforderlich';
-                    startBtn.disabled = true;
+                    speechBtn.disabled = true;
                 }
             }
 
-            async startRealtime() {
-                try {
-                    document.getElementById('statusText').textContent = '⚡ Starte Realtime-Session...';
-                    
-                    // 1. Session erstellen (NEU in GA)
-                    const sessionResponse = await this.createRealtimeSession();
-                    
-                    // 2. WebSocket verbinden
-                    await this.connectWebSocket(sessionResponse);
-                    
-                    this.isRecording = true;
-                    document.getElementById('statusText').textContent = '🎙️ Realtime aktiv - sprechen Sie!';
-                    document.getElementById('startBtn').disabled = true;
-                    document.getElementById('stopBtn').disabled = false;
-                    document.getElementById('realtimeIndicator').classList.remove('hidden');
-
-                } catch (error) {
-                    console.error('Realtime Setup Fehler:', error);
-                    document.getElementById('statusText').textContent = '❌ Fehler: ' + error.message;
+            async testAPI() {
+                if (!this.openAIKey) {
+                    this.showError('API-Key erforderlich!');
+                    return;
                 }
-            }
-
-            async createRealtimeSession() {
+                
+                this.updateStatus('⚡ Teste KI-Verbindung...');
+                
                 try {
-                    const response = await fetch('https://api.openai.com/v1/audio/realtime/sessions', {
+                    const response = await this.fetchWithProxy('https://api.openai.com/v1/chat/completions', {
                         method: 'POST',
                         headers: {
                             'Authorization': `Bearer ${this.openAIKey}`,
-                            'Content-Type': 'application/json',
-                            'OpenAI-Beta': 'realtime=v1' // WICHTIG!
+                            'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            model: "gpt-4o-realtime-preview",
-                            modalities: ["text", "audio"],
-                            instructions: "Du bist ein ultra-schneller Sprachassistent. Antworte IMMER mit maximal 5 Wörtern. KEINE SATZSTRUKTUR. NUR DIE ESSENZ.",
-                            voice: "alloy",
-                            temperature: 0.0,
-                            max_response_output_tokens: 20
+                            model: 'gpt-4o-mini',
+                            messages: [{role: 'user', content: 'Hallo!'}],
+                            max_tokens: 10
                         })
                     });
-
-                    if (!response.ok) {
-                        const errorData = await response.json().catch(() => ({}));
-                        throw new Error(`HTTP ${response.status}: ${JSON.stringify(errorData)}`);
+                    
+                    if (response.ok) {
+                        this.updateStatus('✅ KI verbunden!');
+                        this.showAnswer('Test', 'KI funktioniert!', 50);
+                    } else {
+                        throw new Error(`HTTP ${response.status}`);
                     }
-
-                    const sessionData = await response.json();
-                    this.sessionId = sessionData.id;
-                    
-                    console.log('Session erstellt:', this.sessionId);
-                    return sessionData;
-
                 } catch (error) {
-                    console.error('Session Creation Fehler:', error);
-                    throw error;
+                    this.handleError('KI-Test fehlgeschlagen', error);
                 }
             }
 
-            async connectWebSocket(sessionData) {
-                try {
-                    // WebSocket URL aus Session-Daten
-                    const wsUrl = sessionData.websocket_url;
-                    
-                    this.ws = new WebSocket(wsUrl);
-                    
-                    this.ws.onopen = () => {
-                        console.log('WebSocket verbunden');
-                        document.getElementById('statusText').textContent = '🔗 WebSocket verbunden';
-                        
-                        // Konfiguration senden
-                        this.sendSessionUpdate();
-                    };
-                    
-                    this.ws.onmessage = (event) => {
-                        const message = JSON.parse(event.data);
-                        this.handleWebSocketMessage(message);
-                    };
-                    
-                    this.ws.onerror = (error) => {
-                        console.error('WebSocket Fehler:', error);
-                        document.getElementById('statusText').textContent = '❌ WebSocket Fehler';
-                    };
-                    
-                    this.ws.onclose = () => {
-                        console.log('WebSocket geschlossen');
-                        if (this.isRecording) {
-                            document.getElementById('statusText').textContent = '🔴 Verbindung getrennt';
-                        }
-                    };
-
-                } catch (error) {
-                    console.error('WebSocket Connection Fehler:', error);
-                    throw error;
+            async manualQuestion() {
+                if (!this.openAIKey) {
+                    this.showError('API-Key erforderlich!');
+                    return;
                 }
-            }
-
-            sendSessionUpdate() {
-                if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-                    const sessionUpdate = {
-                        type: "session.update",
-                        session: {
-                            modalities: ["text", "audio"],
-                            instructions: "Du bist ein ultra-schneller Sprachassistent. Antworte IMMER mit maximal 5 Wörtern. KEINE SATZSTRUKTUR. NUR DIE ESSENZ.",
-                            voice: "alloy",
-                            temperature: 0.0,
-                            max_response_output_tokens: 20
-                        }
-                    };
-                    
-                    this.ws.send(JSON.stringify(sessionUpdate));
-                }
-            }
-
-            handleWebSocketMessage(message) {
-                console.log('WebSocket Message:', message);
                 
-                switch (message.type) {
-                    case 'response.audio_transcript.done':
-                        if (message.transcript) {
-                            this.showAnswer("Erkannt", message.transcript, 50);
-                        }
-                        break;
-                        
-                    case 'response.function_call_arguments.done':
-                        // Funktion aufrufen
-                        break;
-                        
-                    case 'error':
-                        console.error('API Error:', message.error);
-                        document.getElementById('statusText').textContent = '❌ API Fehler: ' + message.error.message;
-                        break;
+                const question = prompt('Deine Frage:');
+                if (!question || question.trim().length < 2) return;
+                
+                await this.processQuestion(question.trim());
+            }
+
+            async toggleSpeech() {
+                if (this.isRecording) {
+                    this.stopSpeech();
+                } else {
+                    await this.startSpeech();
                 }
+            }
+
+            async startSpeech() {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ 
+                        audio: { 
+                            sampleRate: 16000, 
+                            channelCount: 1 
+                        }
+                    });
+
+                    this.recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+                    this.recognition.continuous = true;
+                    this.recognition.interimResults = false;
+                    this.recognition.lang = 'de-DE';
+
+                    this.recognition.onresult = (event) => {
+                        for (let i = event.resultIndex; i < event.results.length; i++) {
+                            if (event.results[i].isFinal) {
+                                const question = event.results[i][0].transcript.trim();
+                                if (question.length >= 3) {
+                                    this.processQuestion(question);
+                                }
+                            }
+                        }
+                    };
+
+                    this.recognition.onerror = (event) => {
+                        console.error('Spracherkennungsfehler:', event.error);
+                        this.updateStatus('🔴 Spracherkennung Fehler: ' + event.error);
+                    };
+
+                    this.recognition.start();
+                    this.isRecording = true;
+                    document.getElementById('speechBtn').textContent = '⏹️ Stop Sprache';
+                    this.updateStatus('🎤 Hört zu...');
+                } catch (error) {
+                    this.handleError('Mikrofon-Fehler', error);
+                }
+            }
+
+            stopSpeech() {
+                if (this.recognition) {
+                    this.recognition.stop();
+                    this.isRecording = false;
+                }
+                document.getElementById('speechBtn').textContent = '🎤 Spracheingabe';
+                this.updateStatus('🟢 Bereit');
+            }
+
+            async processQuestion(question) {
+                this.updateStatus('⚡ Verarbeite...');
+                
+                const startTime = performance.now();
+                
+                try {
+                    const response = await this.fetchWithProxy('https://api.openai.com/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${this.openAIKey}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            model: 'gpt-4o-mini',
+                            messages: [
+                                {
+                                    role: 'system',
+                                    content: 'Du bist ein ultra-schneller Sprachassistent. Antworte IMMER mit maximal 5 Wörtern. KEINE SATZSTRUKTUR. NUR DIE ESSENZ.'
+                                },
+                                {role: 'user', content: question.substring(0, 100)}
+                            ],
+                            max_tokens: 15,
+                            temperature: 0.0
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    let answer = data.choices[0].message.content.trim();
+                    answer = answer.split(' ').slice(0, 5).join(' ');
+                    
+                    const latency = Math.round(performance.now() - startTime);
+                    this.showAnswer(question, answer, latency);
+                    
+                } catch (error) {
+                    const latency = Math.round(performance.now() - startTime);
+                    this.handleError('KI-Fehler', error);
+                    this.showAnswer(question, "Fehler aufgetreten", latency);
+                }
+                
+                this.updateStatus('🟢 Bereit');
+            }
+
+            async fetchWithProxy(url, options) {
+                // Versuche verschiedene Proxies
+                for (let i = 0; i < this.corsProxies.length; i++) {
+                    try {
+                        const proxyUrl = this.corsProxies[this.currentProxyIndex];
+                        const fullUrl = proxyUrl + encodeURIComponent(url);
+                        
+                        const response = await fetch(fullUrl, options);
+                        
+                        if (response.ok) {
+                            return response;
+                        }
+                        
+                        // Nächsten Proxy für nächsten Versuch
+                        this.currentProxyIndex = (this.currentProxyIndex + 1) % this.corsProxies.length;
+                    } catch (error) {
+                        // Nächsten Proxy versuchen
+                        this.currentProxyIndex = (this.currentProxyIndex + 1) % this.corsProxies.length;
+                        if (i === this.corsProxies.length - 1) {
+                            throw error; // Alle Proxies fehlgeschlagen
+                        }
+                    }
+                }
+                
+                throw new Error('Alle CORS-Proxies fehlgeschlagen');
             }
 
             showAnswer(question, answer, latency) {
                 const container = document.getElementById('answersContainer');
 
-                // Auto-Cleanup
+                // Auto-Cleanup: Älteste Antworten entfernen
                 const existingAnswers = container.querySelectorAll('.answer-item');
                 if (existingAnswers.length >= this.maxAnswers) {
                     while (container.children.length > this.maxAnswers) {
@@ -444,39 +522,56 @@
                     <div class="answer">• ${answer}</div>
                     <div class="perf-indicator">
                         <span>${latency}ms</span>
-                        <span class="ultra-fast">REALTIME</span>
+                        <span class="${latency < 200 ? 'ultra-fast' : ''}">KI</span>
                     </div>
                 `;
                 container.insertBefore(answerDiv, container.firstChild);
                 container.scrollTop = 0;
             }
 
-            stopRealtime() {
-                if (this.ws) {
-                    this.ws.close();
-                }
+            updateStatus(text) {
+                document.getElementById('statusText').textContent = text;
+            }
+
+            showError(text) {
+                const errorDiv = document.getElementById('keyError');
+                errorDiv.textContent = text;
+                errorDiv.style.display = 'block';
+                setTimeout(() => {
+                    errorDiv.style.display = 'none';
+                }, 5000);
+            }
+
+            handleError(context, error) {
+                console.error(context + ':', error);
+                this.updateStatus(`❌ ${context}: ${error.message}`);
                 
-                this.isRecording = false;
-                document.getElementById('statusText').textContent = '🔴 Gestoppt';
-                document.getElementById('startBtn').disabled = false;
-                document.getElementById('stopBtn').disabled = true;
-                document.getElementById('realtimeIndicator').classList.add('hidden');
+                const errorDetails = document.getElementById('errorDetails');
+                errorDetails.textContent = `${context}: ${error.message}`;
+                errorDetails.style.display = 'block';
+                
+                setTimeout(() => {
+                    errorDetails.style.display = 'none';
+                }, 5000);
             }
         }
 
         function saveApiKey() {
-            const key = document.getElementById('apiKeyInput').value.trim();
+            const keyInput = document.getElementById('apiKeyInput');
+            const key = keyInput.value.trim();
+            
             if (key && key.startsWith('sk-')) {
                 localStorage.setItem('openai_api_key', key);
                 location.reload();
             } else {
-                alert('Ungültiger API-Key (beginnt mit sk-)');
+                alert('Bitte geben Sie einen gültigen API-Key ein (beginnt mit sk-)');
             }
         }
 
+        // Initialisiere die App
         document.addEventListener('DOMContentLoaded', () => {
             try {
-                window.assistant = new RealtimeGAAssistant();
+                window.assistant = new KIAssistent();
             } catch (error) {
                 console.error('App-Initialisierungsfehler:', error);
                 document.getElementById('statusText').textContent = '❌ App-Fehler: ' + error.message;
