@@ -94,19 +94,10 @@
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
         
-        #testBtn {
-            background: linear-gradient(135deg, #27ae60 0%, #219653 100%);
-            color: white;
-        }
-        
-        #questionBtn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        
         #speechBtn {
             background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
             color: white;
+            width: 100%; /* Volle Breite */
         }
         
         button:disabled { 
@@ -254,11 +245,6 @@
             .container {
                 padding: 15px;
             }
-            
-            .button-group {
-                flex-direction: column;
-                gap: 10px;
-            }
         }
     </style>
 </head>
@@ -282,9 +268,7 @@
         </div>
         
         <div class="button-group">
-            <button id="testBtn" onclick="testAPI()">🧪 Test KI</button>
-            <button id="questionBtn" onclick="manualQuestion()">❓ Frage stellen</button>
-            <button id="speechBtn" onclick="toggleSpeech()" disabled>🎤 Spracheingabe</button>
+            <button id="speechBtn" onclick="toggleSpeech()" disabled>🎤 Spracheingabe Starten</button>
         </div>
         
         <div class="answers-container" id="answersContainer">
@@ -324,51 +308,6 @@
                     statusText.textContent = '🔴 Bereit - API-Key erforderlich';
                     speechBtn.disabled = true;
                 }
-            }
-
-            async testAPI() {
-                if (!this.openAIKey) {
-                    this.showError('API-Key erforderlich!');
-                    return;
-                }
-                
-                this.updateStatus('⚡ Teste KI-Verbindung...');
-                
-                try {
-                    const response = await this.fetchWithProxy('https://api.openai.com/v1/chat/completions', {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${this.openAIKey}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            model: 'gpt-4o-mini',
-                            messages: [{role: 'user', content: 'Hallo!'}],
-                            max_tokens: 10
-                        })
-                    });
-                    
-                    if (response.ok) {
-                        this.updateStatus('✅ KI verbunden!');
-                        this.showAnswer('Test', 'KI funktioniert!', 50);
-                    } else {
-                        throw new Error(`HTTP ${response.status}`);
-                    }
-                } catch (error) {
-                    this.handleError('KI-Test fehlgeschlagen', error);
-                }
-            }
-
-            async manualQuestion() {
-                if (!this.openAIKey) {
-                    this.showError('API-Key erforderlich!');
-                    return;
-                }
-                
-                const question = prompt('Deine Frage:');
-                if (!question || question.trim().length < 2) return;
-                
-                await this.processQuestion(question.trim());
             }
 
             async toggleSpeech() {
@@ -411,7 +350,7 @@
 
                     this.recognition.start();
                     this.isRecording = true;
-                    document.getElementById('speechBtn').textContent = '⏹️ Stop Sprache';
+                    document.getElementById('speechBtn').textContent = '⏹️ Spracheingabe Stoppen';
                     this.updateStatus('🎤 Hört zu...');
                 } catch (error) {
                     this.handleError('Mikrofon-Fehler', error);
@@ -423,7 +362,7 @@
                     this.recognition.stop();
                     this.isRecording = false;
                 }
-                document.getElementById('speechBtn').textContent = '🎤 Spracheingabe';
+                document.getElementById('speechBtn').textContent = '🎤 Spracheingabe Starten';
                 this.updateStatus('🟢 Bereit');
             }
 
